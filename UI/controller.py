@@ -19,6 +19,7 @@ class Controller:
         self._view.update_page()
 
 
+
     def handleCompConnessa(self,e):
         txtIdOggetto = self._view._txtIdOggetto.value
 
@@ -48,6 +49,46 @@ class Controller:
         self._view.txt_result.controls.append(
             ft.Text(f"La componente connessa contenente l'oggetto con id {idOggetto} è composta di {sizeCompConn} nodi", color="green"))
         self._view.update_page()
+
+        self._view._ddLun.disabled = False
+        self._view._btnCercaOggetti.disabled = False
+
+        lunValues = range(2, sizeCompConn )
+
+        #for v in lunValues:
+        #    self._view._ddLun.options.append(ft.dropdown.Option(v))
+
+        lunValuesDD=map(lambda x: ft.dropdown.Option(x), lunValues)
+        self._view._ddLun.options = lunValuesDD
+
+        self._view.update_page()
+
+
+    def handleCercaOggetti(self, e):
+        source = self._model.getNodeFromId(int(self._view._txtIdOggetto.value))
+
+        lun = self._view._ddLun.value
+        if lun is None:
+            self._view.txt_result.controls.clear()
+            self._view.txt_result.controls.append(ft.Text("Attenzione, selezionare un valore di lunghezza fra le scelte proposte.", color="red"))
+            self._view.update_page()
+            return
+
+        lunInt =  int(lun)
+        path, cost = self._model.getOptPath(source, lunInt)
+        self._view.txt_result.controls.clear()
+        self._view.txt_result.controls.append(
+         ft.Text(f"Ho trovato un cammino che parte da  {source} che ha un peso totale pari a {cost}", color = "green"))
+        self._view.txt_result.controls.append(
+            ft.Text(f"Di seguito i nodi che compongono questo cammino: ", color = "green"))
+        for p in path:
+            self._view.txt_result.controls.append(ft.Text(p))
+        self._view.update_page()
+
+
+
+
+
 
 
 
